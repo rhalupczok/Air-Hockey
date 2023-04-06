@@ -125,16 +125,16 @@ class Goal extends Rect {
 }
 
 class CircleBall extends Circle {
-	constructor(){
-		super(20, 0);
+	constructor(r, s=0){
+		super(r, s);
 		this.vel = new Vec;
-		this.weight = 2;
+		this.weight = 4;
 	}
 }
 
 class CirclePlayer extends Circle {
-	constructor(){
-		super(40);
+	constructor(r){
+		super(r);
 		this.score = 0;
 		this.weight = 10;
 		this.vel = new Vec;
@@ -145,21 +145,27 @@ class CirclePlayer extends Circle {
 
 class Pong {
 	constructor(canvas){
+		// this.canvasHTML = document.getElementById(game);
+		canvas.width  = innerWidth * 0.8;
+		canvas.height = canvas.width * 5/8;
+
 		this._canvas = canvas;
 		this._context = canvas.getContext("2d");
 
-		this.circleBall = new CircleBall
+		this.circleBall = new CircleBall(this._canvas.width/40)
 
 		this.circlePlayers = [
-			new CirclePlayer,
-			new CirclePlayer
+			new CirclePlayer(this._canvas.width/20),
+			new CirclePlayer(this._canvas.width/20)
 		]
 
 		this.aiHitVecFlag = true;
 		this.aiHitVecVel = new Vec;
 
-		this.circlePlayers[0].pos.x = 60;
-		this.circlePlayers[1].pos.x = this._canvas.width - 60;
+		this.aIPlayerInitialPosX = this._canvas.width - this.circlePlayers[0].size * 1.5
+
+		this.circlePlayers[0].pos.x = this.circlePlayers[0].size * 1.5;
+		this.circlePlayers[1].pos.x = this.aIPlayerInitialPosX;
 		this.circlePlayers.forEach(player => {player.pos.y = this._canvas.height / 2});
 			
 		let lastTime;
@@ -180,8 +186,8 @@ class Pong {
 		this._context.fillStyle = "#000";
 		this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
 		this._context.fillStyle = "#f0f";
-		this._context.fillRect(0, this._canvas.height/3, 10, this._canvas.height/3);
-		this._context.fillRect(this._canvas.width-10, this._canvas.height/3, this._canvas.width, this._canvas.height/3);
+		this._context.fillRect(0, this._canvas.height/3, this._canvas.width/80, this._canvas.height/3);
+		this._context.fillRect(this._canvas.width-this._canvas.width/80, this._canvas.height/3, this._canvas.width, this._canvas.height/3);
 		this.drawCircle(this.circleBall);
 		this.circlePlayers.forEach(player => this.drawCircle(player));
 		}
@@ -252,11 +258,35 @@ class Pong {
 	handleCollisions = () => {
 		this.circlePlayers.forEach(player => this.collideWith(player))
 	}
+
+	playerAI = (dt) => {
+		this.circlePlayers[1].vel.x = 200;
+		this.circlePlayers[1].vel.y = 200;
+
+		if (this.circleBall.pos.y > this.circlePlayers[1].pos.y && this.circlePlayers[1].pos.y < this._canvas.height - this._canvas.height/3 + this.circlePlayers[1].size) {
+			this.circlePlayers[1].pos.y += (this.circlePlayers[1].vel.y * dt);
+		}
+		if (this.circleBall.pos.y < this.circlePlayers[1].pos.y && this.circlePlayers[1].pos.y > this._canvas.height / 3 - this.circlePlayers[1].size) {
+			this.circlePlayers[1].pos.y -= (this.circlePlayers[1].vel.y * dt);
+		}
+		let aiHitVec = this.circleBall.pos.subtract(this.circlePlayers[1].pos)
+		
+		if (aiHitVec.length < 3 * this.circlePlayers[1].size && !this.circlePlayers[1].ballTouched && this.circlePlayers[1].pos.x > canvas.width/2 && this.circleBall.pos.x < this.circlePlayers[1].pos.x){
+			if (this.aiHitVecFlag) {this.aiHitVecVel.x = aiHitVec.x; this.aiHitVecVel.y = aiHitVec.y; this.aiHitVecFlag = false}
+			this.circlePlayers[1].pos.x += this.aiHitVecVel.x * dt * 5;
+			aiHitVec.y ? this.circlePlayers[1].pos.y += this.aiHitVecVel.y * dt * 5: this.circlePlayers[1].pos.y -= this.aiHitVecVel.y * dt * 5;
+		} else {
+			this.circlePlayers[1].pos.x < this.aIPlayerInitialPosX ? this.circlePlayers[1].pos.x += this.circlePlayers[1].vel.x*dt : this.aIPlayerInitialPosX;
+			this.aiHitVecFlag = true;
+		}
+
+		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) this.circleBall.vel.x += -100;
+	}
 	
 	update(dt) {
-		this.circleBall.pos.x += (this.circleBall.vel.x * dt);
-		this.circleBall.pos.y += (this.circleBall.vel.y * dt);
-		this.circleBall.vel.multBy(999/1000); //table friction
+		this.circleBall.pos.x += (this.circleBall.vel.x * dt/2);
+		this.circleBall.pos.y += (this.circleBall.vel.y * dt/2);
+		this.circleBall.vel.multBy(998/1000); //table friction
 	
 		if (this.circleBall.left < 0 || this.circleBall.right > this._canvas.width ){
 			if ((this.circleBall.pos.y > this._canvas.height/3 && this.circleBall.pos.y < this._canvas.height - this._canvas.height/3) || (this.circleBall.pos.y > this._canvas.height/3 && this.circleBall.pos.y < this._canvas.height - this._canvas.height/3)){
@@ -273,40 +303,18 @@ class Pong {
 			this.circleBall.vel.y = -this.circleBall.vel.y;
 			this.circlePlayers.forEach(player => {player.ballTouched = false})
 			}
+			
+		if (this.circleBall.vel.length <= 50) this.circlePlayers.forEach(player => {player.ballTouched = false})
 
 		this.draw();
 
-		// -------------------------- AI
-
-		// this.circlePlayers[1].pos.y = this.circleBall.pos.y;
-		this.circlePlayers[1].vel.x = 200;
-		this.circlePlayers[1].vel.y = 200;
-
-		if (this.circleBall.pos.y > this.circlePlayers[1].pos.y && this.circlePlayers[1].pos.y < this._canvas.height - this._canvas.height/3 + this.circlePlayers[1].size) {
-			this.circlePlayers[1].pos.y += (this.circlePlayers[1].vel.y * dt);
-		}
-		if (this.circleBall.pos.y < this.circlePlayers[1].pos.y && this.circlePlayers[1].pos.y > this._canvas.height / 3 - this.circlePlayers[1].size) {
-			this.circlePlayers[1].pos.y -= (this.circlePlayers[1].vel.y * dt);
-		}
-		let aiHitVec = this.circleBall.pos.subtract(this.circlePlayers[1].pos)
-		
-		if (aiHitVec.length < 4 * this.circlePlayers[1].size && !this.circlePlayers[1].ballTouched && this.circlePlayers[1].pos.x > canvas.width/2 && this.circleBall.pos.x < this.circlePlayers[1].pos.x){
-			if (this.aiHitVecFlag) {this.aiHitVecVel.x = aiHitVec.x; this.aiHitVecVel.y = aiHitVec.y; this.aiHitVecFlag = false}
-			this.circlePlayers[1].pos.x += this.aiHitVecVel.x * dt * 5;
-			aiHitVec.y ? this.circlePlayers[1].pos.y += this.aiHitVecVel.y * dt * 5: this.circlePlayers[1].pos.y -= this.aiHitVecVel.y * dt * 5;
-		} else {
-			this.circlePlayers[1].pos.x < this._canvas.width - 60 ? this.circlePlayers[1].pos.x += this.circlePlayers[1].vel.x*dt : this._canvas.width - 60;
-			this.aiHitVecFlag = true;
-		}
-
-
-		// ------------------------- end AI
-		
+		this.playerAI(dt);
+			
 		this.handleCollisions();
 	}
 }
 
-const canvas = document.getElementById('pong');
+const canvas = document.getElementById('game');
 const pong = new Pong(canvas);
 
 canvas.addEventListener("mousemove", (e) => {
