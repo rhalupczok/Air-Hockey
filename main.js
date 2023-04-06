@@ -315,6 +315,7 @@ class Pong {
 }
 
 const canvas = document.getElementById('game');
+const touchpad = document.getElementById('touchpad');
 const pong = new Pong(canvas);
 
 canvas.addEventListener("mousemove", (e) => {
@@ -322,7 +323,7 @@ canvas.addEventListener("mousemove", (e) => {
 	pong.circlePlayers[0].pos.y = e.offsetY;
 });
 
-canvas.addEventListener("touchmove", (e) => {
-	pong.circlePlayers[0].pos.x = e.touches[0].clientX;
-	pong.circlePlayers[0].pos.y = e.touches[0].clientY;
+touchpad.addEventListener("touchmove", (e) => {
+	pong.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
+	pong.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
 });
