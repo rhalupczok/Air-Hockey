@@ -146,8 +146,9 @@ class CirclePlayer extends Circle {
 class Pong {
 	constructor(canvas){
 		// this.canvasHTML = document.getElementById(game);
-		canvas.width  = innerWidth * 0.8;
+		canvas.width  = innerWidth <= 1000 ? innerWidth * 0.8 : 800;
 		canvas.height = canvas.width * 5/8;
+
 
 		this._canvas = canvas;
 		this._context = canvas.getContext("2d");
@@ -317,13 +318,32 @@ class Pong {
 const canvas = document.getElementById('game');
 const touchpad = document.getElementById('touchpad');
 const pong = new Pong(canvas);
+let touchpadInitX;
+let touchpadInitY;
+let circlePlayerCurrentPositionX;
+let circlePlayerCurrentPositionY;
+
 
 canvas.addEventListener("mousemove", (e) => {
 	pong.circlePlayers[0].pos.x = e.offsetX;
 	pong.circlePlayers[0].pos.y = e.offsetY;
 });
 
+touchpad.addEventListener("touchstart", (e) => {
+	touchpadInitX = e.touches[0].clientX
+	touchpadInitY = e.touches[0].clientY
+	circlePlayerCurrentPositionX = pong.circlePlayers[0].pos.x;
+	circlePlayerCurrentPositionY = pong.circlePlayers[0].pos.y;
+})
+
 touchpad.addEventListener("touchmove", (e) => {
-	pong.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
-	pong.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
+	// pong.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
+	pong.circlePlayers[0].pos.x =  e.touches[0].clientX - touchpadInitX + circlePlayerCurrentPositionX;
+	if (pong.circlePlayers[0].pos.x <= 0) pong.circlePlayers[0].pos.x = 0;
+	if (pong.circlePlayers[0].pos.x >= pong._canvas.width) pong.circlePlayers[0].pos.x = pong._canvas.width;
+
+	// pong.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
+	pong.circlePlayers[0].pos.y = e.touches[0].clientY - touchpadInitY + circlePlayerCurrentPositionY;
+	if (pong.circlePlayers[0].pos.y <= 0) pong.circlePlayers[0].pos.y = 0;
+	if (pong.circlePlayers[0].pos.y >= pong._canvas.height) pong.circlePlayers[0].pos.y = pong._canvas.height;
 });

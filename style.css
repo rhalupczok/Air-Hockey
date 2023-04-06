@@ -18,13 +18,34 @@ html, body {
     align-items: center;
 }
 
+#score {
+    text-align: center;
+    color: white;
+}
 
+#getScore {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    font-size: 3rem;
+}
 
 #touchpad {
+    display: none;
     margin: 0;
     padding: 0;
     border: none;
     width: 80vw;
     height: calc(80vw*5/8);
     background: blue;
+    opacity: 0.6;
+    text-align: center;
+    color: white;
+    border-radius: 1rem;
+}
+
+@media screen and (max-width: 1000px) {
+    #touchpad {
+        display: block;
+
+    }
 }
