@@ -5,7 +5,22 @@ html, body {
     background-size: cover;
     overflow: hidden;
     display: block;
+    position: relative;
 }
+
+#buttons {
+    position: absolute;
+    top: 10px;
+}
+
+header {
+    color: white;
+    text-align: center;
+}
+header h1 {
+    margin: 0;
+}
+
 #content {
     height: 100vh;
     width: 100vw;
@@ -13,9 +28,12 @@ html, body {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
     justify-content: center;
     align-items: center;
+}
+main {
+    margin: 0;
+    padding: 0;
 }
 
 #score {

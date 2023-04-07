@@ -173,6 +173,7 @@ class Pong {
 		const callback = (millis) => {
 			if(lastTime) {
 				this.update((millis - lastTime) / 1000);
+				this.countDown(millis);
 			}
 			lastTime = millis;
 			requestAnimationFrame(callback);	
@@ -191,6 +192,8 @@ class Pong {
 		this._context.fillRect(this._canvas.width-this._canvas.width/80, this._canvas.height/3, this._canvas.width, this._canvas.height/3);
 		this.drawCircle(this.circleBall);
 		this.circlePlayers.forEach(player => this.drawCircle(player));
+
+		document.getElementById("getScore").innerHTML = `${this.circlePlayers[0].score} : ${this.circlePlayers[1].score}`
 		}
 
 	drawRect(rect){
@@ -283,6 +286,20 @@ class Pong {
 
 		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) this.circleBall.vel.x += -100;
 	}
+
+	countDown = (millis) => {
+		let lastTime = (180-(millis/1000));
+		let min = Math.floor((lastTime) % (60*60) / 60);
+		let sec = Math.floor((lastTime) % (60));
+		let timer = document.getElementById("timer");
+
+		if (min + sec >=0) {
+			timer.innerHTML = `TIME: ${min}.${sec}`
+		 } else {
+			timer.innerHTML = `TIME'S UP !!!`
+			this.circleBall.vel.multBy(990/1000);
+		 }
+	}
 	
 	update(dt) {
 		this.circleBall.pos.x += (this.circleBall.vel.x * dt/2);
@@ -308,7 +325,7 @@ class Pong {
 		if (this.circleBall.vel.length <= 50) this.circlePlayers.forEach(player => {player.ballTouched = false})
 
 		this.draw();
-
+		
 		this.playerAI(dt);
 			
 		this.handleCollisions();
@@ -338,12 +355,12 @@ touchpad.addEventListener("touchstart", (e) => {
 
 touchpad.addEventListener("touchmove", (e) => {
 	// pong.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
-	pong.circlePlayers[0].pos.x =  e.touches[0].clientX - touchpadInitX + circlePlayerCurrentPositionX;
+	pong.circlePlayers[0].pos.x =  (e.touches[0].clientX - touchpadInitX)*2 + circlePlayerCurrentPositionX;
 	if (pong.circlePlayers[0].pos.x <= 0) pong.circlePlayers[0].pos.x = 0;
 	if (pong.circlePlayers[0].pos.x >= pong._canvas.width) pong.circlePlayers[0].pos.x = pong._canvas.width;
 
 	// pong.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
-	pong.circlePlayers[0].pos.y = e.touches[0].clientY - touchpadInitY + circlePlayerCurrentPositionY;
+	pong.circlePlayers[0].pos.y = (e.touches[0].clientY - touchpadInitY)*2 + circlePlayerCurrentPositionY;
 	if (pong.circlePlayers[0].pos.y <= 0) pong.circlePlayers[0].pos.y = 0;
 	if (pong.circlePlayers[0].pos.y >= pong._canvas.height) pong.circlePlayers[0].pos.y = pong._canvas.height;
 });
