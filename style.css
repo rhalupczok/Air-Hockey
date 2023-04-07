@@ -11,6 +11,25 @@ html, body {
 #buttons {
     position: absolute;
     top: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn {
+    background: rgba(136, 0, 0, 0.7);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    min-width: 30px;
+}
+
+.btn:hover{
+    background: rgba(136, 0, 0, 1)
 }
 
 header {

@@ -168,6 +168,8 @@ class Pong {
 		this.circlePlayers[0].pos.x = this.circlePlayers[0].size * 1.5;
 		this.circlePlayers[1].pos.x = this.aIPlayerInitialPosX;
 		this.circlePlayers.forEach(player => {player.pos.y = this._canvas.height / 2});
+
+		this.gameTime = 180;
 			
 		let lastTime;
 		const callback = (millis) => {
@@ -215,6 +217,37 @@ class Pong {
 		this.circleBall.vel.x = 0;
 		this.circleBall.vel.y = 0;
 		this.circlePlayers.forEach(player => {player.ballTouched = false})
+	}
+
+	resetPositions() {
+		this.circleBall.pos.x = this._canvas.width/2;
+		this.circleBall.pos.y = this._canvas.height/2;
+		this.circleBall.vel.x = 0;
+		this.circleBall.vel.y = 0;
+
+		this.circlePlayers[0].pos.x = this.circlePlayers[0].size * 1.5;
+		this.circlePlayers[1].pos.x = this.aIPlayerInitialPosX;
+		this.circlePlayers.forEach(player => {
+			player.pos.y = this._canvas.height / 2; 
+			player.ballTouched = false;
+		});
+	}
+
+	newGame() {
+		this.circleBall.pos.x = this._canvas.width/2;
+		this.circleBall.pos.y = this._canvas.height/2;
+		this.circleBall.vel.x = 0;
+		this.circleBall.vel.y = 0;
+
+		this.circlePlayers[0].pos.x = this.circlePlayers[0].size * 1.5;
+		this.circlePlayers[1].pos.x = this.aIPlayerInitialPosX;
+		this.circlePlayers.forEach(player => {
+			player.pos.y = this._canvas.height / 2; 
+			player.ballTouched = false;;
+			player.score = 0;
+		});
+		
+		this.gameTime = 180;
 	}
 
 	collideWith = (player) => {
@@ -288,16 +321,16 @@ class Pong {
 	}
 
 	countDown = (millis) => {
-		let lastTime = (180-(millis/1000));
+		let lastTime = (this.gameTime-(millis/1000));
 		let min = Math.floor((lastTime) % (60*60) / 60);
 		let sec = Math.floor((lastTime) % (60));
 		let timer = document.getElementById("timer");
 
 		if (min + sec >=0) {
-			timer.innerHTML = `TIME: ${min}.${sec}`
+			timer.innerHTML = `TIME: ${min}min ${sec}sec`
 		 } else {
 			timer.innerHTML = `TIME'S UP !!!`
-			this.circleBall.vel.multBy(990/1000);
+			this.circleBall.vel.multBy(985/1000);
 		 }
 	}
 	
@@ -334,7 +367,11 @@ class Pong {
 
 const canvas = document.getElementById('game');
 const touchpad = document.getElementById('touchpad');
+const newGamebtn = document.getElementById('newGameBtn');
+const resetPositionsBtn = document.getElementById('resetPositionsBtn');
 const pong = new Pong(canvas);
+
+
 let touchpadInitX;
 let touchpadInitY;
 let circlePlayerCurrentPositionX;
@@ -364,3 +401,6 @@ touchpad.addEventListener("touchmove", (e) => {
 	if (pong.circlePlayers[0].pos.y <= 0) pong.circlePlayers[0].pos.y = 0;
 	if (pong.circlePlayers[0].pos.y >= pong._canvas.height) pong.circlePlayers[0].pos.y = pong._canvas.height;
 });
+
+newGamebtn.addEventListener("click", (e) => pong.newGame());
+resetPositionsBtn.addEventListener("click", (e) => pong.resetPositions());
