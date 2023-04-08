@@ -156,8 +156,8 @@ class Pong {
 		this.circleBall = new CircleBall(this._canvas.width/40)
 
 		this.circlePlayers = [
-			new CirclePlayer(this._canvas.width/20),
-			new CirclePlayer(this._canvas.width/20)
+			new CirclePlayer(this._canvas.width/15), // was 20
+			new CirclePlayer(this._canvas.width/15)  // was 20
 		]
 
 		this.aiHitVecFlag = true;
@@ -310,7 +310,7 @@ class Pong {
 		}
 		let aiHitVec = this.circleBall.pos.subtract(this.circlePlayers[1].pos)
 		
-		if (aiHitVec.length < 4 * this.circlePlayers[1].size && !this.circlePlayers[1].ballTouched && this.circlePlayers[1].pos.x > canvas.width/2 && this.circleBall.pos.x < this.circlePlayers[1].pos.x){
+		if (aiHitVec.length < 3 * this.circlePlayers[1].size && !this.circlePlayers[1].ballTouched && this.circlePlayers[1].pos.x > canvas.width/2 && this.circleBall.pos.x < this.circlePlayers[1].pos.x){
 			if (this.aiHitVecFlag) {this.aiHitVecVel.x = aiHitVec.x; this.aiHitVecVel.y = aiHitVec.y; this.aiHitVecFlag = false}
 			this.circlePlayers[1].pos.x += this.aiHitVecVel.x * dt * 5;
 			aiHitVec.y ? this.circlePlayers[1].pos.y += this.aiHitVecVel.y * dt * 3: this.circlePlayers[1].pos.y -= this.aiHitVecVel.y * dt * 3;
@@ -384,6 +384,20 @@ canvas.addEventListener("mousemove", (e) => {
 	pong.circlePlayers[0].pos.x = e.offsetX;
 	pong.circlePlayers[0].pos.y = e.offsetY;
 });
+
+canvas.addEventListener("touchmove", (e) => {
+	pong.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
+	// pong.circlePlayers[0].pos.x =  (e.touches[0].clientX - touchpadInitX)*2 + circlePlayerCurrentPositionX;
+	if (pong.circlePlayers[0].pos.x <= 0) pong.circlePlayers[0].pos.x = 0;
+	if (pong.circlePlayers[0].pos.x >= pong._canvas.width) pong.circlePlayers[0].pos.x = pong._canvas.width;
+
+	pong.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
+	// pong.circlePlayers[0].pos.y = (e.touches[0].clientY - touchpadInitY)*2 + circlePlayerCurrentPositionY;
+	if (pong.circlePlayers[0].pos.y <= 0) pong.circlePlayers[0].pos.y = 0;
+	if (pong.circlePlayers[0].pos.y >= pong._canvas.height) pong.circlePlayers[0].pos.y = pong._canvas.height;
+});
+
+
 
 touchpad.addEventListener("touchstart", (e) => {
 	touchpadInitX = e.touches[0].clientX
