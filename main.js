@@ -162,6 +162,7 @@ class Pong {
 
 		this.aiHitVecFlag = true;
 		this.aiHitVecVel = new Vec;
+		this.timer = 0;
 
 		this.aIPlayerInitialPosX = this._canvas.width - this.circlePlayers[0].size * 1.5
 
@@ -174,8 +175,9 @@ class Pong {
 		let lastTime;
 		const callback = (millis) => {
 			if(lastTime) {
+				this.timer += (millis - lastTime);
 				this.update((millis - lastTime) / 1000);
-				this.countDown(millis);
+				this.countDown(this.timer);
 			}
 			lastTime = millis;
 			requestAnimationFrame(callback);	
@@ -183,7 +185,7 @@ class Pong {
 
 		callback();
 		
-		this.reset();
+		this.newGame();
 	}
 
 	draw(){
@@ -247,7 +249,7 @@ class Pong {
 			player.score = 0;
 		});
 		
-		this.gameTime = 180;
+		this.timer = 0;
 	}
 
 	collideWith = (player) => {
@@ -298,7 +300,7 @@ class Pong {
 
 	playerAI = (dt) => {
 		this.circlePlayers[1].vel.x = 200;
-		this.circlePlayers[1].vel.y = 200;
+		this.circlePlayers[1].vel.y = 100;
 
 		if (this.circleBall.pos.y > this.circlePlayers[1].pos.y && this.circlePlayers[1].pos.y < this._canvas.height - this._canvas.height/3 + this.circlePlayers[1].size) {
 			this.circlePlayers[1].pos.y += (this.circlePlayers[1].vel.y * dt);
@@ -308,10 +310,10 @@ class Pong {
 		}
 		let aiHitVec = this.circleBall.pos.subtract(this.circlePlayers[1].pos)
 		
-		if (aiHitVec.length < 3 * this.circlePlayers[1].size && !this.circlePlayers[1].ballTouched && this.circlePlayers[1].pos.x > canvas.width/2 && this.circleBall.pos.x < this.circlePlayers[1].pos.x){
+		if (aiHitVec.length < 4 * this.circlePlayers[1].size && !this.circlePlayers[1].ballTouched && this.circlePlayers[1].pos.x > canvas.width/2 && this.circleBall.pos.x < this.circlePlayers[1].pos.x){
 			if (this.aiHitVecFlag) {this.aiHitVecVel.x = aiHitVec.x; this.aiHitVecVel.y = aiHitVec.y; this.aiHitVecFlag = false}
 			this.circlePlayers[1].pos.x += this.aiHitVecVel.x * dt * 5;
-			aiHitVec.y ? this.circlePlayers[1].pos.y += this.aiHitVecVel.y * dt * 5: this.circlePlayers[1].pos.y -= this.aiHitVecVel.y * dt * 5;
+			aiHitVec.y ? this.circlePlayers[1].pos.y += this.aiHitVecVel.y * dt * 3: this.circlePlayers[1].pos.y -= this.aiHitVecVel.y * dt * 3;
 		} else {
 			this.circlePlayers[1].pos.x < this.aIPlayerInitialPosX ? this.circlePlayers[1].pos.x += this.circlePlayers[1].vel.x*dt : this.aIPlayerInitialPosX;
 			this.aiHitVecFlag = true;
@@ -320,23 +322,23 @@ class Pong {
 		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) this.circleBall.vel.x += -100;
 	}
 
-	countDown = (millis) => {
-		let lastTime = (this.gameTime-(millis/1000));
+	countDown = (time) => {
+		let lastTime = (this.gameTime-(time/1000));
 		let min = Math.floor((lastTime) % (60*60) / 60);
 		let sec = Math.floor((lastTime) % (60));
 		let timer = document.getElementById("timer");
 
-		if (min + sec >=0) {
+		if (min + sec >= 0) {
 			timer.innerHTML = `TIME: ${min}min ${sec}sec`
 		 } else {
 			timer.innerHTML = `TIME'S UP !!!`
-			this.circleBall.vel.multBy(985/1000);
+			this.circleBall.vel.multBy(980/1000);
 		 }
 	}
 	
 	update(dt) {
-		this.circleBall.pos.x += (this.circleBall.vel.x * dt/2);
-		this.circleBall.pos.y += (this.circleBall.vel.y * dt/2);
+		this.circleBall.pos.x += (this.circleBall.vel.x * dt/3);
+		this.circleBall.pos.y += (this.circleBall.vel.y * dt/3);
 		this.circleBall.vel.multBy(998/1000); //table friction
 	
 		if (this.circleBall.left < 0 || this.circleBall.right > this._canvas.width ){
@@ -355,7 +357,7 @@ class Pong {
 			this.circlePlayers.forEach(player => {player.ballTouched = false})
 			}
 			
-		if (this.circleBall.vel.length <= 50) this.circlePlayers.forEach(player => {player.ballTouched = false})
+		if (this.circleBall.vel.length <= 100) this.circlePlayers.forEach(player => {player.ballTouched = false})
 
 		this.draw();
 		
