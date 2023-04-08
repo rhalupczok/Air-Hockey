@@ -319,7 +319,7 @@ class Pong {
 			this.aiHitVecFlag = true;
 		}
 
-		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) this.circleBall.vel.x += -100;
+		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) this.circleBall.vel.x += -200;
 	}
 
 	countDown = (time) => {
