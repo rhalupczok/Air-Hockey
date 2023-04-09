@@ -323,8 +323,12 @@ class Pong {
 			this.aiHitVecFlag = true;
 		}
 
+<<<<<<< HEAD
 		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) {this.circleBall.vel.x *= 4; console.log(this.circleBall.vel)};
 		if (aiHitVec.length < this.circlePlayers[1].size) this.circleBall.vel.x = -200;
+=======
+		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) this.circleBall.vel.x += -200;
+>>>>>>> 7c63946705d5fd02eaafd475f61cc5ee1a85aea7
 	}
 
 	countDown = (time) => {
