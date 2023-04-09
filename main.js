@@ -302,24 +302,29 @@ class Pong {
 		this.circlePlayers[1].vel.x = 200;
 		this.circlePlayers[1].vel.y = 100;
 
+		//follow the ball in Y direction
 		if (this.circleBall.pos.y > this.circlePlayers[1].pos.y && this.circlePlayers[1].pos.y < this._canvas.height - this._canvas.height/3 + this.circlePlayers[1].size) {
 			this.circlePlayers[1].pos.y += (this.circlePlayers[1].vel.y * dt);
 		}
 		if (this.circleBall.pos.y < this.circlePlayers[1].pos.y && this.circlePlayers[1].pos.y > this._canvas.height / 3 - this.circlePlayers[1].size) {
 			this.circlePlayers[1].pos.y -= (this.circlePlayers[1].vel.y * dt);
 		}
-		let aiHitVec = this.circleBall.pos.subtract(this.circlePlayers[1].pos)
+
+		//checking distance between center of AI and ball - this is also fixed vector of hiting when the distance between ball and player will be matching to first condition in next "if" 
+		let aiHitVec = this.circleBall.pos.subtract(this.circlePlayers[1].pos) 
 		
+		//hiting contitions
 		if (aiHitVec.length < 3 * this.circlePlayers[1].size && !this.circlePlayers[1].ballTouched && this.circlePlayers[1].pos.x > canvas.width/2 && this.circleBall.pos.x < this.circlePlayers[1].pos.x){
-			if (this.aiHitVecFlag) {this.aiHitVecVel.x = aiHitVec.x; this.aiHitVecVel.y = aiHitVec.y; this.aiHitVecFlag = false}
-			this.circlePlayers[1].pos.x += this.aiHitVecVel.x * dt * 5;
-			aiHitVec.y ? this.circlePlayers[1].pos.y += this.aiHitVecVel.y * dt * 3: this.circlePlayers[1].pos.y -= this.aiHitVecVel.y * dt * 3;
-		} else {
+			if (this.aiHitVecFlag) {this.aiHitVecVel.x = aiHitVec.x; this.aiHitVecVel.y = aiHitVec.y; this.aiHitVecFlag = false} //cathing the hiting vector in moment of spelnienia conditions and not change until hit)
+			this.circlePlayers[1].pos.x += this.aiHitVecVel.x * dt * 5;	// x velocity of hiting
+			this.circlePlayers[1].pos.y += this.aiHitVecVel.y * dt * 3; //y velocity of hiting (if decided upwards or downwards)
+		} else { //back to initial position on X
 			this.circlePlayers[1].pos.x < this.aIPlayerInitialPosX ? this.circlePlayers[1].pos.x += this.circlePlayers[1].vel.x*dt : this.aIPlayerInitialPosX;
 			this.aiHitVecFlag = true;
 		}
 
-		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) this.circleBall.vel.x += -100;
+		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) {this.circleBall.vel.x *= 4; console.log(this.circleBall.vel)};
+		if (aiHitVec.length < this.circlePlayers[1].size) this.circleBall.vel.x = -200;
 	}
 
 	countDown = (time) => {
@@ -341,9 +346,10 @@ class Pong {
 		this.circleBall.pos.y += (this.circleBall.vel.y * dt/3);
 		this.circleBall.vel.multBy(998/1000); //table friction
 	
+		//goal or hit the vertical wall and change dierction of ball
 		if (this.circleBall.left < 0 || this.circleBall.right > this._canvas.width ){
 			if ((this.circleBall.pos.y > this._canvas.height/3 && this.circleBall.pos.y < this._canvas.height - this._canvas.height/3) || (this.circleBall.pos.y > this._canvas.height/3 && this.circleBall.pos.y < this._canvas.height - this._canvas.height/3)){
-				const playerId = this.circleBall.vel.x < 0 | 0; // "| 0" convert boolean true or false to number 1 or 0.
+				const playerId = this.circleBall.vel.x < 0 | 0; // "| 0" convert boolean true or false to number 1 or 0.     if ball goes left (vel<0) then playerID = 1 / if ball goes right playerID=0
 				this.circlePlayers[playerId].score++;
 				this.reset();
 			} else {
@@ -351,13 +357,17 @@ class Pong {
 			this.circlePlayers.forEach(player => {player.ballTouched = false})
 			}
 		}
-
+		//hiting top or bootom
 		if (this.circleBall.top < 0 || this.circleBall.bottom > this._canvas.height){
 			this.circleBall.vel.y = -this.circleBall.vel.y;
 			this.circlePlayers.forEach(player => {player.ballTouched = false})
 			}
-			
-		if (this.circleBall.vel.length <= 100) this.circlePlayers.forEach(player => {player.ballTouched = false})
+		
+		//second touch by the same player can be done when the distance between center of player ande ball will be bigger than 3x player radious.
+		this.circlePlayers.forEach(player => {if(player.ballTouched === true && this.circleBall.pos.subtract(player.pos).length > 3 * player.size) player.ballTouched = false})
+
+		//reset when ball will be out of canvas
+		if (this.circleBall.pos.x > canvas.width + 20 || this.circleBall.pos.x < -20 || this.circleBall.pos.y > canvas.height + 20 || this.circleBall.pos.y < -20) {this.resetPositions()}
 
 		this.draw();
 		
