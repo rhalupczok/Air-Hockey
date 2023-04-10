@@ -149,7 +149,13 @@ class Game {
 		canvas.width  = innerWidth <= 1000 ? innerWidth * 0.8 : 800;
 		canvas.height = canvas.width * 5/8;
 
-		if (innerHeight < innerWidth * 1.2) touchpad.style.display = "none";
+		if (innerHeight < innerWidth * 1.2 && innerWidth < 1000) {
+			touchpad.style.display = "none";
+			canvas.style.position = "absolute";
+			canvas.style.bottom = "20px";
+			canvas.style.left = "calc(50% - 80vw/2)";
+			canvas.style.opacity = "0.9";
+		}
 
 		if (canvas.height > innerHeight) {
 			for (let i=0; canvas.height > 0.8*innerHeight; i++){
