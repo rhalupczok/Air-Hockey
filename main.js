@@ -143,11 +143,20 @@ class CirclePlayer extends Circle {
 	}
 }
 
-class Pong {
+class Game {
 	constructor(canvas){
 		// this.canvasHTML = document.getElementById(game);
 		canvas.width  = innerWidth <= 1000 ? innerWidth * 0.8 : 800;
 		canvas.height = canvas.width * 5/8;
+
+		if (innerHeight < innerWidth * 1.2) touchpad.style.display = "none";
+
+		if (canvas.height > innerHeight) {
+			for (let i=0; canvas.height > 0.8*innerHeight; i++){
+				canvas.width  = innerWidth * 0.8 - i;
+				canvas.height = canvas.width * 5/8;
+			};
+		}
 
 
 		this._canvas = canvas;
@@ -381,7 +390,7 @@ const canvas = document.getElementById('game');
 const touchpad = document.getElementById('touchpad');
 const newGamebtn = document.getElementById('newGameBtn');
 const resetPositionsBtn = document.getElementById('resetPositionsBtn');
-const pong = new Pong(canvas);
+const game = new Game(canvas);
 
 
 let touchpadInitX;
@@ -391,20 +400,20 @@ let circlePlayerCurrentPositionY;
 
 
 canvas.addEventListener("mousemove", (e) => {
-	pong.circlePlayers[0].pos.x = e.offsetX;
-	pong.circlePlayers[0].pos.y = e.offsetY;
+	game.circlePlayers[0].pos.x = e.offsetX;
+	game.circlePlayers[0].pos.y = e.offsetY;
 });
 
 canvas.addEventListener("touchmove", (e) => {
-	pong.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
-	// pong.circlePlayers[0].pos.x =  (e.touches[0].clientX - touchpadInitX)*2 + circlePlayerCurrentPositionX;
-	if (pong.circlePlayers[0].pos.x <= 0) pong.circlePlayers[0].pos.x = 0;
-	if (pong.circlePlayers[0].pos.x >= pong._canvas.width) pong.circlePlayers[0].pos.x = pong._canvas.width;
+	game.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
+	// game.circlePlayers[0].pos.x =  (e.touches[0].clientX - touchpadInitX)*2 + circlePlayerCurrentPositionX;
+	if (game.circlePlayers[0].pos.x <= 0) game.circlePlayers[0].pos.x = 0;
+	if (game.circlePlayers[0].pos.x >= game._canvas.width) game.circlePlayers[0].pos.x = game._canvas.width;
 
-	pong.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
-	// pong.circlePlayers[0].pos.y = (e.touches[0].clientY - touchpadInitY)*2 + circlePlayerCurrentPositionY;
-	if (pong.circlePlayers[0].pos.y <= 0) pong.circlePlayers[0].pos.y = 0;
-	if (pong.circlePlayers[0].pos.y >= pong._canvas.height) pong.circlePlayers[0].pos.y = pong._canvas.height;
+	game.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
+	// game.circlePlayers[0].pos.y = (e.touches[0].clientY - touchpadInitY)*2 + circlePlayerCurrentPositionY;
+	if (game.circlePlayers[0].pos.y <= 0) game.circlePlayers[0].pos.y = 0;
+	if (game.circlePlayers[0].pos.y >= game._canvas.height) game.circlePlayers[0].pos.y = game._canvas.height;
 });
 
 
@@ -412,21 +421,21 @@ canvas.addEventListener("touchmove", (e) => {
 touchpad.addEventListener("touchstart", (e) => {
 	touchpadInitX = e.touches[0].clientX
 	touchpadInitY = e.touches[0].clientY
-	circlePlayerCurrentPositionX = pong.circlePlayers[0].pos.x;
-	circlePlayerCurrentPositionY = pong.circlePlayers[0].pos.y;
+	circlePlayerCurrentPositionX = game.circlePlayers[0].pos.x;
+	circlePlayerCurrentPositionY = game.circlePlayers[0].pos.y;
 })
 
 touchpad.addEventListener("touchmove", (e) => {
-	// pong.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
-	pong.circlePlayers[0].pos.x =  (e.touches[0].clientX - touchpadInitX)*2 + circlePlayerCurrentPositionX;
-	if (pong.circlePlayers[0].pos.x <= 0) pong.circlePlayers[0].pos.x = 0;
-	if (pong.circlePlayers[0].pos.x >= pong._canvas.width) pong.circlePlayers[0].pos.x = pong._canvas.width;
+	// game.circlePlayers[0].pos.x = e.touches[0].clientX - e.target.offsetLeft;
+	game.circlePlayers[0].pos.x =  (e.touches[0].clientX - touchpadInitX)*2 + circlePlayerCurrentPositionX;
+	if (game.circlePlayers[0].pos.x <= 0) game.circlePlayers[0].pos.x = 0;
+	if (game.circlePlayers[0].pos.x >= game._canvas.width) game.circlePlayers[0].pos.x = game._canvas.width;
 
-	// pong.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
-	pong.circlePlayers[0].pos.y = (e.touches[0].clientY - touchpadInitY)*2 + circlePlayerCurrentPositionY;
-	if (pong.circlePlayers[0].pos.y <= 0) pong.circlePlayers[0].pos.y = 0;
-	if (pong.circlePlayers[0].pos.y >= pong._canvas.height) pong.circlePlayers[0].pos.y = pong._canvas.height;
+	// game.circlePlayers[0].pos.y = e.touches[0].clientY - e.target.offsetTop;
+	game.circlePlayers[0].pos.y = (e.touches[0].clientY - touchpadInitY)*2 + circlePlayerCurrentPositionY;
+	if (game.circlePlayers[0].pos.y <= 0) game.circlePlayers[0].pos.y = 0;
+	if (game.circlePlayers[0].pos.y >= game._canvas.height) game.circlePlayers[0].pos.y = game._canvas.height;
 });
 
-newGamebtn.addEventListener("click", (e) => pong.newGame());
-resetPositionsBtn.addEventListener("click", (e) => pong.resetPositions());
+newGamebtn.addEventListener("click", (e) => game.newGame());
+resetPositionsBtn.addEventListener("click", (e) => game.resetPositions());
