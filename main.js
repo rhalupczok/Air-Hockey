@@ -149,11 +149,11 @@ class Game {
 		canvas.width  = innerWidth <= 1000 ? innerWidth * 0.8 : 800;
 		canvas.height = canvas.width * 5/8;
 
-		if (innerHeight < innerWidth * 1.2 && innerWidth < 1000) {
+		if (innerHeight < innerWidth * 1.2 && navigator.userAgentData.mobile) {
 			touchpad.style.display = "none";
 			canvas.style.position = "absolute";
 			canvas.style.bottom = "20px";
-			canvas.style.left = "calc(50% - 80vw/2)";
+			canvas.style.left = "calc(50% - canvas.width/2)";
 			canvas.style.opacity = "0.9";
 		}
 
