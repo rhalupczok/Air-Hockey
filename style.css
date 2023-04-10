@@ -70,8 +70,8 @@ main {
 #touchpad {
     display: none;
     position: absolute;
-    bottom: 20px;
-    left: calc(50% - 80vw/2);
+    bottom: 50px;
+    right: calc(50% - 80vw/2);
     margin: 0;
     padding: 0;
     border: none;

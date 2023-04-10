@@ -152,9 +152,17 @@ class Game {
 		if (innerHeight < innerWidth * 1.2 && navigator.userAgentData.mobile) {
 			touchpad.style.display = "none";
 			canvas.style.position = "absolute";
-			canvas.style.bottom = "20px";
+			canvas.style.bottom = "50px";
 			canvas.style.left = "calc(50% - canvas.width/2)";
 			canvas.style.opacity = "0.9";
+			if (canvas.width == 800 && innerHeight * 2 < innerWidth) {
+				touchpad.style.display = "block";
+				touchpad.style.position = "absolute";
+				touchpad.style.width = "80vh";
+				touchpad.style.height = "80vh"
+				touchpad.style.right = "50px";
+				canvas.style.left = "50px";
+			}
 		}
 
 		if (canvas.height > innerHeight) {
