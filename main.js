@@ -161,8 +161,11 @@ class Game {
 			canvas.style.position = "absolute";
 			canvas.style.bottom = "20px";
 			canvas.style.left = "calc(50% - canvas.width/2)";
-			// canvas.style.opacity = "0.9";
+			canvas.style.zIndex = "2";
+			canvas.style.opacity = "0.9";
 			if (canvas.width < innerWidth/2) {
+				const txt = document.querySelectorAll("header, #score")
+				txt.forEach((txt) => {txt.style.alignSelf = "flex-end"; txt.style.marginRight = "50px"});
 				touchpad.style.display = "block";
 				touchpad.style.position = "absolute";
 				touchpad.style.width = "80vh";
@@ -170,6 +173,9 @@ class Game {
 				touchpad.style.right = "50px";
 				canvas.style.left = "50px";
 			}
+		}
+		if (canvas.height < innerHeight/2) {
+			touchpad.style.display = "block";
 		}
 
 
@@ -348,7 +354,7 @@ class Game {
 			this.aiHitVecFlag = true;
 		}
 
-		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) {this.circleBall.vel.x *= 4; console.log(this.circleBall.vel)};
+		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) {this.circleBall.vel.x *= 4;};
 		if (aiHitVec.length < this.circlePlayers[1].size) this.circleBall.vel.x = -200;
 	}
 
@@ -456,7 +462,10 @@ touchpad.addEventListener("touchmove", (e) => {
 newGamebtn.addEventListener("click", (e) => game.newGame());
 resetPositionsBtn.addEventListener("click", (e) => game.resetPositions());
 
-screen.addEventListener("orientationchange", () => {
+window.addEventListener("orientationchange", () => {
 	location.reload()
-	console.log(`The orientation of the screen is: ${screen.orientation}`);
+  });
+
+window.addEventListener("resize", () => {
+	location.reload()
   });
