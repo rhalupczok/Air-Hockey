@@ -169,7 +169,7 @@ class Game {
 				touchpad.style.display = "block";
 				touchpad.style.position = "absolute";
 				touchpad.style.width = "80vh";
-				touchpad.style.height = "80vh"
+				touchpad.style.height = "50vh"
 				touchpad.style.right = "50px";
 				canvas.style.left = "50px";
 			}
