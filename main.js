@@ -159,7 +159,7 @@ class Game {
 		if (innerHeight < innerWidth * 1.2 && navigator.userAgentData.mobile) {
 			touchpad.style.display = "none";
 			canvas.style.position = "absolute";
-			canvas.style.bottom = "50px";
+			canvas.style.bottom = "20px";
 			canvas.style.left = "calc(50% - canvas.width/2)";
 			// canvas.style.opacity = "0.9";
 			if (canvas.width < innerWidth/2) {
