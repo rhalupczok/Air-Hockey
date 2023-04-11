@@ -146,16 +146,23 @@ class CirclePlayer extends Circle {
 class Game {
 	constructor(canvas){
 		// this.canvasHTML = document.getElementById(game);
-		canvas.width  = innerWidth <= 1000 ? innerWidth * 0.8 : 800;
+		canvas.width  = innerWidth <= 1200 ? innerWidth * 0.8 : 1000;
 		canvas.height = canvas.width * 5/8;
+
+		if (canvas.height > innerHeight) {
+			for (let i=0; canvas.height > 0.8*innerHeight; i++){
+				canvas.width  = innerWidth * 0.8 - i;
+				canvas.height = canvas.width * 5/8;
+			};
+		}
 
 		if (innerHeight < innerWidth * 1.2 && navigator.userAgentData.mobile) {
 			touchpad.style.display = "none";
 			canvas.style.position = "absolute";
 			canvas.style.bottom = "50px";
 			canvas.style.left = "calc(50% - canvas.width/2)";
-			canvas.style.opacity = "0.9";
-			if (canvas.width == 800 && innerHeight * 2 < innerWidth) {
+			// canvas.style.opacity = "0.9";
+			if (canvas.width < innerWidth/2) {
 				touchpad.style.display = "block";
 				touchpad.style.position = "absolute";
 				touchpad.style.width = "80vh";
@@ -165,12 +172,7 @@ class Game {
 			}
 		}
 
-		if (canvas.height > innerHeight) {
-			for (let i=0; canvas.height > 0.8*innerHeight; i++){
-				canvas.width  = innerWidth * 0.8 - i;
-				canvas.height = canvas.width * 5/8;
-			};
-		}
+
 
 
 		this._canvas = canvas;
