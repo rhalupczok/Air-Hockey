@@ -455,3 +455,8 @@ touchpad.addEventListener("touchmove", (e) => {
 
 newGamebtn.addEventListener("click", (e) => game.newGame());
 resetPositionsBtn.addEventListener("click", (e) => game.resetPositions());
+
+screen.addEventListener("orientationchange", () => {
+	location.reload()
+	console.log(`The orientation of the screen is: ${screen.orientation}`);
+  });
