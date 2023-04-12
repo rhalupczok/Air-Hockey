@@ -166,14 +166,14 @@ class Game {
 			if (canvas.width < innerWidth/2) {
 				const txt = document.querySelectorAll("header, #score")
 				console.log(txt)
-				txt.forEach((txt) => {txt.style.alignSelf = "flex-end"; txt.style.marginRight = "140px"});
-				txt[0].style.marginRight = "180px"
+				txt.forEach((txt) => {txt.style.alignSelf = "flex-end"; txt.style.marginRight = "10vw"});
+				txt[0].style.marginRight = "13vw"
 				touchpad.style.display = "flex";
 				touchpad.style.position = "absolute";
-				touchpad.style.width = "500px";
+				touchpad.style.width = "40vw";
 				touchpad.style.height = "70vh"
-				touchpad.style.right = "50px";
-				canvas.style.left = "50px";
+				touchpad.style.right = "20px";
+				canvas.style.left = "20px";
 			}
 		}
 		if (canvas.height < innerHeight/2) {
