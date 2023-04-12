@@ -5,7 +5,8 @@ html, body {
     background-size: 100%;
     display: block;
     position: relative;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -16,6 +17,7 @@ html, body {
     right: 0;
     display: flex;
     justify-content: space-around;
+    z-index: 2;
 }
 
 .btn {
@@ -42,8 +44,13 @@ header h1 {
 }
 
 #content {
-    height: 100vh;
     width: 100vw;
+    height: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: hidden;
+
     margin: 0;
     padding: 0;
     display: flex;
@@ -79,14 +86,19 @@ main {
     min-height: 300px;
     background: blue;
     opacity: 0.6;
-    text-align: center;
     color: white;
     border-radius: 1rem;
+    justify-content: center;
+    align-items: flex-end;
 }
 
 #touchpad p {
-    padding-top: 200px;
-}
+    margin: 0;
+    padding: 0;
+    height: fit-content;
+    margin-bottom: 20px;
+    
+    }
 
 /* @media screen and (max-width: 1200px) {
     #touchpad {
