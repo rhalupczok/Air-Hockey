@@ -145,17 +145,21 @@ class CirclePlayer extends Circle {
 
 class Game {
 	constructor(canvas){
-		//canvas width
+		//canvas dimensions depend on screen size
 		canvas.width  = innerWidth <= 1200 ? innerWidth * 0.8 : 1000;
 		canvas.height = canvas.width * 5/8;
+		//---------------------------------------
 
+		//ensure that canvas height isn't bigger than screen
 		if (canvas.height > innerHeight) {
 			for (let i=0; canvas.height > 0.8*innerHeight; i++){
 				canvas.width  = innerWidth * 0.8 - i;
 				canvas.height = canvas.width * 5/8;
 			};
 		}
+		//---------------------------------------
 
+		//touchpad position depends on canvas/screen size and orientation
 		if (innerHeight < innerWidth * 1.2 && navigator.userAgentData.mobile) {
 			touchpad.style.display = "none";
 			canvas.style.position = "absolute";
@@ -176,13 +180,12 @@ class Game {
 				canvas.style.left = "20px";
 			}
 		}
-		if (canvas.height < innerHeight/2) {
+		if (canvas.height < innerHeight/2 && navigator.userAgentData.mobile) {
 			touchpad.style.display = "flex";
 		}
+		//---------------------------------------
 
-
-
-
+		//creating objects
 		this._canvas = canvas;
 		this._context = canvas.getContext("2d");
 
@@ -192,24 +195,30 @@ class Game {
 			new CirclePlayer(this._canvas.width/15), // was 20
 			new CirclePlayer(this._canvas.width/15)  // was 20
 		]
-
+		//---------------------------------------
+		
+		//objects used by AI
 		this.aiHitVecFlag = true;
 		this.aiHitVecVel = new Vec;
 		this.timer = 0;
 
-		this.aIPlayerInitialPosX = this._canvas.width - this.circlePlayers[0].size * 1.5
+		this.aIPlayerInitialPosX = this._canvas.width - this.circlePlayers[0].size * 1.5;
+		//---------------------------------------
 
+		//initial positions of players
 		this.circlePlayers[0].pos.x = this.circlePlayers[0].size * 1.5;
 		this.circlePlayers[1].pos.x = this.aIPlayerInitialPosX;
 		this.circlePlayers.forEach(player => {player.pos.y = this._canvas.height / 2});
+		//---------------------------------------
 
-		this.gameTime = 180;
-			
+		this.gameTime = 180; //gametime in sec
+
+		//animationframe - call the update and timer function with the constant time as an arg in every frame.
 		let lastTime;
 		const callback = (millis) => {
 			if(lastTime) {
-				this.timer += (millis - lastTime);
-				this.update((millis - lastTime) / 1000);
+				this.timer += (millis - lastTime); //const time between frames
+				this.update((millis - lastTime) / 1000); //calling the update finction with const time in sec
 				this.countDown(this.timer);
 			}
 			lastTime = millis;
@@ -217,10 +226,12 @@ class Game {
 		}
 
 		callback();
+		//---------------------------------------
 		
 		this.newGame();
 	}
 
+	//objects dawing
 	draw(){
 		this._context.fillStyle = "#000";
 		this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
@@ -244,16 +255,28 @@ class Game {
 		this._context.arc(circle.pos.x, circle.pos.y, circle.size, circle.circleStart, 2 * Math.PI);
 		this._context.fill();
 	}
+	//---------------------------------------
 
 	reset(){
-		this.circleBall.pos.x = this._canvas.width/2;
-		this.circleBall.pos.y = this._canvas.height/2;
-
+		if (this.circleBall.vel.x < 0) {
+			this.circleBall.pos.x = this._canvas.width/4;
+			this.circleBall.pos.y = this._canvas.height/2;
+			// this.circlePlayers.forEach(player => {player.ballTouched = false})
+		}
+		else {
+			this.circleBall.pos.x = this.circlePlayers[1].pos.x - 2 * this.circlePlayers[1].size;
+			this.circleBall.pos.y = this._canvas.height/2 + (Math.random() > 0.5 ? 50 * Math.random() : -50 * Math.random());
+			this.circlePlayers[1].pos.y = this._canvas.height/2 + (Math.random() > 0.5 ? 50 * Math.random() : -50 * Math.random());
+			this.circlePlayers[1].pos.x = this.aIPlayerInitialPosX;
+		}
 		this.circleBall.vel.x = 0;
 		this.circleBall.vel.y = 0;
+		// this.circlePlayers[1].ballTouched = true;
 		this.circlePlayers.forEach(player => {player.ballTouched = false})
+		// setTimeout(() => {this.circlePlayers.forEach(player => {player.ballTouched = false})}, 1000);
 	}
 
+	//reset touch flag, ball velocity and positions of players and ball
 	resetPositions() {
 		this.circleBall.pos.x = this._canvas.width/2;
 		this.circleBall.pos.y = this._canvas.height/2;
@@ -267,6 +290,7 @@ class Game {
 			player.ballTouched = false;
 		});
 	}
+	//---------------------------------------
 
 	newGame() {
 		this.circleBall.pos.x = this._canvas.width/2;
@@ -285,20 +309,20 @@ class Game {
 		this.timer = 0;
 	}
 
+	//phisics of hits
 	collideWith = (player) => {
 		
-		const n = this.circleBall.pos.subtract(player.pos);  //finding normal Vector
+		const n = this.circleBall.pos.subtract(player.pos);  //finding normal Vector between ball and player in hitting moment
 		const dist = n.length;
 
-		player.vel = player.pos.subtract(player.previousFramePosition).mult(100);
-		player.previousFramePosition.x = player.pos.x;
-		player.previousFramePosition.y = player.pos.y;
+		player.vel = player.pos.subtract(player.previousFramePosition).mult(100); //velocity vector of player found by subtracting positions from two animationframes
+		player.previousFramePosition.x = player.pos.x; //previous position container
+		player.previousFramePosition.y = player.pos.y; //previous position container
 		
-		if (dist > (player.size + this.circleBall.size)) return;
-		if (player.ballTouched) return;
+		if (dist > (player.size + this.circleBall.size)) return; //moment of colliding
+		if (player.ballTouched) return; //this flag solve issue of double hit (sometimes animationframe delay cause that ball is inside of ball and instructions below was done second time )
 
-		// this.circleBall.frameCounter = 0;
-
+		//the next lines are phisical calculations to find correct vectors of collision 
 		const un = n.mult(1/n.length);  // unit normal vector
 		const ut = new Vec(-un.y, un.x); //unit tangent vector
 			
@@ -307,7 +331,7 @@ class Game {
 		const v2n = un.dot(this.circleBall.vel);
 		const v2t = ut.dot(this.circleBall.vel);
 
-		//velocities after cooliding
+		//velocities after cooliding - take into account the speed and mass of obcjects 
 
 		let v1tTag = v1t;
 		let v2tTag = v2t;
@@ -319,18 +343,20 @@ class Game {
 		v2nTag = un.mult(v2nTag);
 		v2tTag = ut.mult(v2tTag);
 
-		this.circleBall.vel = v2nTag.add(v2tTag);
+		this.circleBall.vel = v2nTag.add(v2tTag); //final result - velocity vector of ball after hiting
+		//-----------------------------------------
 
-		if (player !== this.circlePlayers[0]) this.circlePlayers[0].ballTouched = false;
-		if (player !== this.circlePlayers[1]) this.circlePlayers[1].ballTouched = false;
+		if (player !== this.circlePlayers[0]) this.circlePlayers[0].ballTouched = false; //release hiting calculations for second player
+		if (player !== this.circlePlayers[1]) this.circlePlayers[1].ballTouched = false; //release hiting calculations for second player
 
-		player.ballTouched = true;
+		player.ballTouched = true; //block hiting calculations for current player
 	};
 
 	handleCollisions = () => {
 		this.circlePlayers.forEach(player => this.collideWith(player))
 	}
 
+	//AI PLAYER LOGIC
 	playerAI = (dt) => {
 		this.circlePlayers[1].vel.x = 200;
 		this.circlePlayers[1].vel.y = 100;
@@ -348,7 +374,7 @@ class Game {
 		
 		//hiting contitions
 		if (aiHitVec.length < 3 * this.circlePlayers[1].size && !this.circlePlayers[1].ballTouched && this.circlePlayers[1].pos.x > canvas.width/2 && this.circleBall.pos.x < this.circlePlayers[1].pos.x){
-			if (this.aiHitVecFlag) {this.aiHitVecVel.x = aiHitVec.x; this.aiHitVecVel.y = aiHitVec.y; this.aiHitVecFlag = false} //cathing the hiting vector in moment of spelnienia conditions and not change until hit)
+			if (this.aiHitVecFlag) {this.aiHitVecVel.x = aiHitVec.x; this.aiHitVecVel.y = aiHitVec.y; this.aiHitVecFlag = false} //cathing the hiting vector in moment of fulfilling conditions and not change until hit. Otherwise the vector was updated in each dt interval)
 			this.circlePlayers[1].pos.x += this.aiHitVecVel.x * dt * 5;	// x velocity of hiting
 			this.circlePlayers[1].pos.y += this.aiHitVecVel.y * dt * 3; //y velocity of hiting (if decided upwards or downwards)
 		} else { //back to initial position on X
@@ -356,10 +382,12 @@ class Game {
 			this.aiHitVecFlag = true;
 		}
 
+		//solving issue when the ball is behind/inside the AI 
 		if (this.circleBall.vel.length < 50 && this.circleBall.pos.x >= this.aIPlayerInitialPosX) {this.circleBall.vel.x *= 4;};
 		if (aiHitVec.length < this.circlePlayers[1].size) this.circleBall.vel.x = -200;
 	}
 
+	//timer
 	countDown = (time) => {
 		let lastTime = (this.gameTime-(time/1000));
 		let min = Math.floor((lastTime) % (60*60) / 60);
@@ -370,19 +398,20 @@ class Game {
 			timer.innerHTML = `TIME: ${min}min ${sec}sec`
 		 } else {
 			timer.innerHTML = `TIME'S UP !!!`
-			this.circleBall.vel.multBy(980/1000);
+			this.circleBall.vel.multBy(970/1000); //increasing the table friction when times up
 		 }
 	}
 	
+	//move the objects in canvas in animationframe interval
 	update(dt) {
-		this.circleBall.pos.x += (this.circleBall.vel.x * dt/3);
-		this.circleBall.pos.y += (this.circleBall.vel.y * dt/3);
+		this.circleBall.pos.x += (this.circleBall.vel.x * dt/3); //ball moving
+		this.circleBall.pos.y += (this.circleBall.vel.y * dt/3); 
 		this.circleBall.vel.multBy(998/1000); //table friction
 	
 		//goal or hit the vertical wall and change dierction of ball
 		if (this.circleBall.left < 0 || this.circleBall.right > this._canvas.width ){
 			if ((this.circleBall.pos.y > this._canvas.height/3 && this.circleBall.pos.y < this._canvas.height - this._canvas.height/3) || (this.circleBall.pos.y > this._canvas.height/3 && this.circleBall.pos.y < this._canvas.height - this._canvas.height/3)){
-				const playerId = this.circleBall.vel.x < 0 | 0; // "| 0" convert boolean true or false to number 1 or 0.     if ball goes left (vel<0) then playerID = 1 / if ball goes right playerID=0
+				const playerId = this.circleBall.vel.x < 0 | 0; // "| 0" convert boolean true or false to number 1 or 0. If ball goes left (vel<0) then playerID = 1 / if ball goes right playerID=0
 				this.circlePlayers[playerId].score++;
 				this.reset();
 			} else {
@@ -390,6 +419,8 @@ class Game {
 			this.circlePlayers.forEach(player => {player.ballTouched = false})
 			}
 		}
+		//------------------------------------------------------
+
 		//hiting top or bootom
 		if (this.circleBall.top < 0 || this.circleBall.bottom > this._canvas.height){
 			this.circleBall.vel.y = -this.circleBall.vel.y;
@@ -462,7 +493,7 @@ touchpad.addEventListener("touchmove", (e) => {
 });
 
 newGamebtn.addEventListener("click", (e) => game.newGame());
-resetPositionsBtn.addEventListener("click", (e) => game.resetPositions());
+resetPositionsBtn.addEventListener("click", (e) => game.reset());
 
 window.addEventListener("orientationchange", () => {
 	location.reload()
