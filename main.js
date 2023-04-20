@@ -410,20 +410,23 @@ class Game {
                     this._canvas.height / 3 +
                     this.circlePlayers[1].size
         ) {
-            this.circlePlayers[1].pos.y +=
-                (this.circlePlayers[1].vel.y +
-                    this.circlePlayers[0].vel.y / 3) *
-                dt; //taking into acount player move
+            this.circlePlayers[1].pos.y += this.circlePlayers[1].vel.y * dt;
         }
         if (
             this.circleBall.pos.y < this.circlePlayers[1].pos.y &&
             this.circlePlayers[1].pos.y >
                 this._canvas.height / 3 - this.circlePlayers[1].size
         ) {
-            this.circlePlayers[1].pos.y -=
-                (this.circlePlayers[1].vel.y -
-                    this.circlePlayers[0].vel.y / 3) *
-                dt; //taking into acount player move
+            this.circlePlayers[1].pos.y -= this.circlePlayers[1].vel.y * dt;
+        }
+
+        //taking into acount player move - you can try to cheat opponent
+        if (
+            this.circleBall.pos.x < this._canvas.width / 2 &&
+            !this.circlePlayers[0].ballTouched
+        ) {
+            this.circlePlayers[1].pos.y +=
+                (this.circlePlayers[0].vel.y / 2) * dt;
         }
 
         //checking distance between center of AI and ball - this is also fixed vector of hiting when the distance between ball and player will be matching to first condition in next "if"
