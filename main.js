@@ -158,7 +158,7 @@ class Game {
         //---------------------------------------
 
         //touchpad position depends on canvas/screen size and orientation
-        if (innerHeight < innerWidth * 1.2 && navigator.userAgentData.mobile) {
+        if (innerHeight < innerWidth && navigator.userAgentData.mobile) {
             touchpad.style.display = "none";
             canvas.style.position = "absolute";
             canvas.style.bottom = "20px";
@@ -176,13 +176,14 @@ class Game {
                 touchpad.style.display = "flex";
                 touchpad.style.position = "absolute";
                 touchpad.style.width = "40vw";
-                touchpad.style.height = "70vh";
+                touchpad.style.height = "80vh";
                 touchpad.style.right = "20px";
                 canvas.style.left = "20px";
             }
         }
         if (canvas.height < innerHeight / 2 && navigator.userAgentData.mobile) {
             touchpad.style.display = "flex";
+            touchpad.style.height = "30vh";
         }
         //---------------------------------------
 
@@ -283,7 +284,6 @@ class Game {
         if (playerId === 1) {
             this.circleBall.pos.x = this._canvas.width / 4;
             this.circleBall.pos.y = this._canvas.height / 2;
-            // this.circlePlayers.forEach(player => {player.ballTouched = false})
         } else {
             this.circleBall.pos.x =
                 this.circlePlayers[1].pos.x - 2 * this.circlePlayers[1].size;
@@ -301,11 +301,9 @@ class Game {
         }
         this.circleBall.vel.x = 0;
         this.circleBall.vel.y = 0;
-        // this.circlePlayers[1].ballTouched = true;
         this.circlePlayers.forEach((player) => {
             player.ballTouched = false;
         });
-        // setTimeout(() => {this.circlePlayers.forEach(player => {player.ballTouched = false})}, 1000);
     }
 
     //reset touch flag, ball velocity and positions of players and ball
@@ -391,6 +389,10 @@ class Game {
             this.circlePlayers[1].ballTouched = false; //release hiting calculations for second player
 
         player.ballTouched = true; //block hiting calculations for current player
+        if (audio.isAudioOn && audio.hittingSound) {
+            audio.hittingSound.load();
+            audio.hittingSound.play();
+        }
     };
 
     handleCollisions = () => {
@@ -420,7 +422,7 @@ class Game {
             this.circlePlayers[1].pos.y -= this.circlePlayers[1].vel.y * dt;
         }
 
-        //taking into acount player move - you can try to cheat opponent
+        //taking into acount player move - user can try to cheat opponent
         if (
             this.circleBall.pos.x < this._canvas.width / 2 &&
             !this.circlePlayers[0].ballTouched
@@ -503,6 +505,15 @@ class Game {
             ) {
                 const playerId = (this.circleBall.vel.x < 0) | 0; // "| 0" convert boolean true or false to number 1 or 0. If ball goes left (vel<0) then playerID = 1 / if ball goes right playerID=0
                 this.circlePlayers[playerId].score++;
+                //audio sounds when score
+                if (
+                    audio.isAudioOn &&
+                    audio.scoreSound &&
+                    audio.droppingSound
+                ) {
+                    audio.scoreSound.play();
+                    audio.droppingSound.play();
+                }
                 this.reset(playerId);
             } else {
                 this.circleBall.vel.x = -this.circleBall.vel.x;
@@ -555,12 +566,32 @@ const canvas = document.getElementById("game");
 const touchpad = document.getElementById("touchpad");
 const newGamebtn = document.getElementById("newGameBtn");
 const resetPositionsBtn = document.getElementById("resetPositionsBtn");
+let audio = {
+    isAudioOn: false,
+    audioBtn: document.getElementById("audio-btn"),
+    hittingSound: document.getElementById("hitting-ball-audio"),
+    droppingSound: document.getElementById("dropping-ball-audio"),
+    scoreSound: document.getElementById("score-sound-audio"),
+};
+
 const game = new Game(canvas);
 
 let touchpadInitX;
 let touchpadInitY;
 let circlePlayerCurrentPositionX;
 let circlePlayerCurrentPositionY;
+
+const audioSwitch = () => {
+    if (!audio.isAudioOn) {
+        audio.isAudioOn = true;
+        audio.audioBtn.src = "audio/audio-on.png";
+    } else {
+        audio.isAudioOn = false;
+        audio.audioBtn.src = "audio/audio-off.png";
+    }
+};
+
+audio.audioBtn.addEventListener("click", audioSwitch);
 
 canvas.addEventListener("mousemove", (e) => {
     game.circlePlayers[0].pos.x = e.offsetX;

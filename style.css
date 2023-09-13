@@ -17,8 +17,9 @@ body {
     left: 0;
     right: 0;
     display: flex;
-    justify-content: space-around;
-    z-index: 2;
+    justify-content: space-between;
+    z-index: 9;
+    margin: 0 5px;
 }
 
 .btn {
@@ -36,12 +37,26 @@ body {
     background: rgba(136, 0, 0, 1);
 }
 
+#audio-btn {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    transition: transform 0.2s;
+}
+
+#audio-btn:hover {
+    cursor: pointer;
+    transform: scale(1.5);
+}
+
 header {
     color: white;
     text-align: center;
 }
 header h1 {
-    margin: 0;
+    margin: 20px 0 0 0;
 }
 
 #content {
@@ -84,7 +99,7 @@ main {
     padding: 0;
     border: none;
     width: 80vw;
-    min-height: 300px;
+    /* min-height: 100px; */
     background: blue;
     opacity: 0.6;
     color: white;

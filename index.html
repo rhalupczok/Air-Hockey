@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>CyberGame</title>
+        <title>AirHockey</title>
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
@@ -16,7 +16,7 @@
                 </button>
             </div>
             <header>
-                <h1>CYBER GAME</h1>
+                <h1>AirHockey</h1>
                 <h3 id="timer">TIME:</h3>
             </header>
             <canvas id="game"></canvas>
@@ -28,6 +28,21 @@
                 <div id="touchpad">
                     <p>TOUCHPAD</p>
                 </div>
+            </div>
+            <div class="audio-container">
+                <audio
+                    id="hitting-ball-audio"
+                    src="audio/hitting-ball.wav"
+                ></audio>
+                <audio
+                    id="dropping-ball-audio"
+                    src="audio/dropping-ball.wav"
+                ></audio>
+                <audio
+                    id="score-sound-audio"
+                    src="audio/score-sound.wav"
+                ></audio>
+                <img id="audio-btn" src="audio/audio-off.png" alt="audio" />
             </div>
             <script src="main.js"></script>
         </div>
