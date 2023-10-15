@@ -144,30 +144,33 @@ class CirclePlayer extends Circle {
 class Game {
     constructor(canvas) {
         //canvas dimensions depend on screen size
-        canvas.width = innerWidth <= 1200 ? innerWidth * 0.8 : 1000;
+        canvas.width =
+            window.innerWidth <= 1200 ? window.innerWidth * 0.8 : 1000;
         canvas.height = (canvas.width * 5) / 8;
         //---------------------------------------
 
         //ensure that canvas height isn't bigger than screen
-        if (canvas.height > innerHeight) {
-            for (let i = 0; canvas.height > 0.8 * innerHeight; i++) {
-                canvas.width = innerWidth * 0.8 - i;
+        if (window.canvas.height > window.innerHeight) {
+            for (let i = 0; canvas.height > 0.8 * window.innerHeight; i++) {
+                canvas.width = window.innerWidth * 0.8 - i;
                 canvas.height = (canvas.width * 5) / 8;
             }
         }
         //---------------------------------------
 
         //touchpad position depends on canvas/screen size and orientation
-        if (innerHeight < innerWidth && navigator.userAgentData.mobile) {
+        if (
+            window.innerHeight < window.innerWidth &&
+            navigator.userAgentData.mobile
+        ) {
             touchpad.style.display = "none";
             canvas.style.position = "absolute";
             canvas.style.bottom = "20px";
             canvas.style.left = "calc(50% - canvas.width/2)";
             canvas.style.zIndex = "2";
             canvas.style.opacity = "0.9";
-            if (canvas.width < innerWidth / 2) {
+            if (canvas.width < window.innerWidth / 2) {
                 const txt = document.querySelectorAll("header, #score");
-                console.log(txt);
                 txt.forEach((txt) => {
                     txt.style.alignSelf = "flex-end";
                     txt.style.marginRight = "10vw";
@@ -181,7 +184,10 @@ class Game {
                 canvas.style.left = "20px";
             }
         }
-        if (canvas.height < innerHeight / 2 && navigator.userAgentData.mobile) {
+        if (
+            canvas.height < window.innerHeight / 2 &&
+            navigator.userAgentData.mobile
+        ) {
             touchpad.style.display = "flex";
             touchpad.style.height = "30vh";
         }
