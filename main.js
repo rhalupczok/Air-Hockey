@@ -145,13 +145,13 @@ class Game {
     constructor(canvas) {
         //canvas dimensions depend on screen size
         canvas.width =
-            window.innerWidth <= 1200 ? window.innerWidth * 0.8 : 1000;
+            window.innerWidth <= 1200 ? window.innerWidth * 0.8 : 800;
         canvas.height = (canvas.width * 5) / 8;
         //---------------------------------------
 
         //ensure that canvas height isn't bigger than screen
-        if (canvas.height > window.innerHeight) {
-            for (let i = 0; canvas.height > 0.8 * window.innerHeight; i++) {
+        if (canvas.height > window.innerHeight * 0.5) {
+            for (let i = 0; canvas.height > 0.5 * window.innerHeight; i++) {
                 canvas.width = window.innerWidth * 0.8 - i;
                 canvas.height = (canvas.width * 5) / 8;
             }
@@ -187,12 +187,13 @@ class Game {
                 txt.forEach((txt) => {
                     txt.style.alignSelf = "flex-end";
                     txt.style.marginRight = "10vw";
+                    txt.style.fontSize = "0.3rem";
                 });
-                txt[0].style.marginRight = "13vw";
+                txt[0].style.fontSize = "1rem";
                 touchpad.style.display = "flex";
                 touchpad.style.position = "absolute";
                 touchpad.style.width = "40vw";
-                touchpad.style.height = "80vh";
+                touchpad.style.height = "60vh";
                 touchpad.style.right = "20px";
                 canvas.style.left = "20px";
             }
