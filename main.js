@@ -150,7 +150,7 @@ class Game {
         //---------------------------------------
 
         //ensure that canvas height isn't bigger than screen
-        if (window.canvas.height > window.innerHeight) {
+        if (canvas.height > window.innerHeight) {
             for (let i = 0; canvas.height > 0.8 * window.innerHeight; i++) {
                 canvas.width = window.innerWidth * 0.8 - i;
                 canvas.height = (canvas.width * 5) / 8;
