@@ -159,10 +159,23 @@ class Game {
         //---------------------------------------
 
         //touchpad position depends on canvas/screen size and orientation
-        if (
-            window.innerHeight < window.innerWidth &&
-            navigator.userAgentData.mobile
-        ) {
+        function detectMob() {
+            const toMatch = [
+                /Android/i,
+                /webOS/i,
+                /iPhone/i,
+                /iPad/i,
+                /iPod/i,
+                /BlackBerry/i,
+                /Windows Phone/i,
+            ];
+
+            return toMatch.some((toMatchItem) => {
+                return navigator.userAgent.match(toMatchItem);
+            });
+        }
+
+        if (window.innerHeight < window.innerWidth && detectMob()) {
             touchpad.style.display = "none";
             canvas.style.position = "absolute";
             canvas.style.bottom = "20px";
