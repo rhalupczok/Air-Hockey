@@ -160,6 +160,7 @@ class Game {
 
         //touchpad position depends on canvas/screen size and orientation
         function detectMob() {
+            //check if mobile and return boolean
             const toMatch = [
                 /Android/i,
                 /webOS/i,
@@ -178,29 +179,27 @@ class Game {
         if (window.innerHeight < window.innerWidth && detectMob()) {
             touchpad.style.display = "none";
             canvas.style.position = "absolute";
-            canvas.style.bottom = "20px";
+            canvas.style.bottom = "20vh";
             canvas.style.left = "calc(50% - canvas.width/2)";
             canvas.style.zIndex = "2";
             canvas.style.opacity = "0.9";
             if (canvas.width < window.innerWidth / 2) {
-                const txt = document.querySelectorAll("header, #score");
-                txt.forEach((txt) => {
-                    txt.style.alignSelf = "flex-end";
-                    txt.style.marginRight = "10vw";
-                    txt.style.fontSize = "0.3rem";
-                });
-                txt[0].style.fontSize = "1rem";
+                const content = document.querySelector("#content");
+
+                content.style.paddingTop = "2vh";
                 touchpad.style.display = "flex";
                 touchpad.style.position = "absolute";
                 touchpad.style.width = "40vw";
                 touchpad.style.height = "60vh";
-                touchpad.style.right = "20px";
+                touchpad.style.right = "3vw";
+                touchpad.style.bottom = "10vh";
                 canvas.style.left = "20px";
             }
         }
-        if (canvas.height < window.innerHeight / 2 && detectMob()) {
+        if (canvas.height < window.innerHeight / 2.5 && detectMob()) {
             touchpad.style.display = "flex";
             touchpad.style.height = "30vh";
+            touchpad.style.position = "absolute";
         }
         //---------------------------------------
 
