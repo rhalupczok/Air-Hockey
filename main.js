@@ -197,10 +197,7 @@ class Game {
                 canvas.style.left = "20px";
             }
         }
-        if (
-            canvas.height < window.innerHeight / 2 &&
-            navigator.userAgentData.mobile
-        ) {
+        if (canvas.height < window.innerHeight / 2 && detectMob()) {
             touchpad.style.display = "flex";
             touchpad.style.height = "30vh";
         }
